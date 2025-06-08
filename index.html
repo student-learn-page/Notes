@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>📘 Final Notes Viewer</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .file-card {
+      background: white;
+      padding: 20px;
+      margin: 10px auto;
+      border-radius: 10px;
+      max-width: 600px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .file-card h3 {
+      margin: 0 0 10px;
+    }
+    .file-card p {
+      margin: 0 0 15px;
+    }
+    .file-card a {
+      background: #28a745;
+      color: white;
+      padding: 10px 15px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 Final Notes Viewer</h1>
+  <div id="content">Loading data from Supabase...</div>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://lzezwbapnpvwcrtrxwen.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6ZXp3YmFwbnB2d2NydHJ4d2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0MTAyMjMsImV4cCI6MjA2NDk4NjIyM30.BLc1VKpyU9hWLnJaM80Qu0fZBql83oPG1UNRLLi-GgM'
+    );
+
+    async function loadFiles() {
+      try {
+        const { data, error } = await supabase
+          .from('Note')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        console.log("✅ DATA:", data);
+        console.log("❌ ERROR:", error);
+
+        const contentDiv = document.getElementById('content');
+        contentDiv.innerHTML = '';
+
+        if (error || !data || data.length === 0) {
+          contentDiv.innerHTML = '<p style="color:red;">⚠️ No notes found. Check your Supabase rows and policies.</p>';
+          return;
+        }
+
+        data.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'file-card';
+          div.innerHTML = `
+            <h3>${item.title || 'Untitled'}</h3>
+            <p>${item.description || 'No description available.'}</p>
+            <a href="${item.file_url}" target="_blank">📥 Download</a>
+          `;
+          contentDiv.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error("⚠️ JS Error:", err);
+        document.getElementById('content').innerHTML = '<p style="color:red;">Client error occurred. Check console.</p>';
+      }
+    }
+
+    loadFiles();
+  </script>
+</body>
+</html>
