@@ -5,12 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/@supabase/supabase-js@2.39.5/dist/umd/supabase.js"></script>
   <style>
+    :root {
+      --bg: #111;
+      --text: #e0e0e0;
+      --accent: #00ff99;
+      --card-bg: #000;
+      --input-bg: #000;
+      --note-text: #fff;
+      --note-bg: #222;
+      --border: #444;
+    }
+
+    .light-theme {
+      --bg: #fff;
+      --text: #000;
+      --accent: #007bff;
+      --card-bg: #f5f5f5;
+      --input-bg: #f0f0f0;
+      --note-text: #000;
+      --note-bg: #e0e0e0;
+      --border: #ccc;
+    }
+
     body {
       font-family: 'Courier New', monospace;
-      background: #111;
-      color: #e0e0e0;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
       padding-bottom: 80px;
+      transition: all 0.3s ease;
     }
 
     .tab-content, .subpage {
@@ -24,7 +47,7 @@
 
     h2, h3 {
       text-align: center;
-      color: #00ff99;
+      color: var(--accent);
     }
 
     button, .format-btn {
@@ -51,8 +74,8 @@
     }
 
     .card {
-      background: #000;
-      border: 1px solid #444;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 12px;
       margin: 15px auto;
@@ -66,8 +89,8 @@
     }
 
     pre {
-      background: #111;
-      color: #0f0;
+      background: var(--note-bg);
+      color: var(--note-text);
       padding: 10px;
       border-radius: 6px;
       white-space: pre-wrap;
@@ -78,10 +101,10 @@
       padding: 10px;
       font-family: inherit;
       margin-bottom: 10px;
-      border: 1px solid #00ff99;
+      border: 1px solid var(--accent);
       border-radius: 6px;
-      background: #000;
-      color: #00ff99;
+      background: var(--input-bg);
+      color: var(--accent);
     }
 
     .bottom-nav {
@@ -91,7 +114,7 @@
       background: #000;
       display: flex;
       justify-content: space-around;
-      border-top: 1px solid #444;
+      border-top: 1px solid var(--border);
       padding: 10px 0;
     }
 
@@ -119,6 +142,9 @@
   </style>
 </head>
 <body>
+<div style="text-align: right; padding: 10px;">
+  <button onclick="toggleTheme()">🌗 Toggle Theme</button>
+</div>
 
 <!-- Tabs -->
 <div id="homeTab" class="tab-content active">
@@ -197,6 +223,10 @@ function askPassword() {
   } else {
     alert("❌ Wrong password!");
   }
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("light-theme");
 }
 
 let allFiles = [];
