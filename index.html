@@ -5,125 +5,127 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/@supabase/supabase-js@2.39.5/dist/umd/supabase.js"></script>
   <style>
-    :root {
-      --bg: #111;
-      --text: #e0e0e0;
-      --accent: #00ff99;
-      --card-bg: #000;
-      --input-bg: #000;
-      --note-text: #fff;
-      --note-bg: #222;
-      --border: #444;
-    }
-    .light-theme {
-      --bg: #fff;
-      --text: #000;
-      --accent: #007bff;
-      --card-bg: #f5f5f5;
-      --input-bg: #f0f0f0;
-      --note-text: #000;
-      --note-bg: #e0e0e0;
-      --border: #ccc;
-    }
-    body {
-      font-family: 'Courier New', monospace;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding-bottom: 80px;
-      transition: all 0.3s ease;
-    }
-    .tab-content, .subpage {
-      display: none;
-      padding: 20px;
-    }
-    .active {
-      display: block;
-    }
-    h2, h3 {
-      text-align: center;
-      color: var(--accent);
-    }
-    button, .format-btn {
-      padding: 10px 20px;
-      font-size: 16px;
-      background: #000;
-      color: #fff;
-      border: 1px solid #fff;
-      border-radius: 4px;
-      cursor: pointer;
-      margin: 10px auto;
-      display: block;
-      font-weight: bold;
-    }
-    .format-btn {
-      width: 80%;
-      max-width: 300px;
-    }
-    button:hover, .format-btn:hover {
-      background: #fff;
-      color: #000;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      margin: 15px auto;
-      max-width: 600px;
-    }
-    img, video {
-      width: 100%;
-      max-height: 320px;
-      border-radius: 6px;
-    }
-    pre {
-      background: var(--note-bg);
-      color: var(--note-text);
-      padding: 10px;
-      border-radius: 6px;
-      white-space: pre-wrap;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      font-family: inherit;
-      margin-bottom: 10px;
-      border: 1px solid var(--accent);
-      border-radius: 6px;
-      background: var(--input-bg);
-      color: var(--accent);
-    }
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background: #000;
-      display: flex;
-      justify-content: space-around;
-      border-top: 1px solid var(--border);
-      padding: 10px 0;
-    }
-    .bottom-nav button {
-      flex: 1;
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .bottom-nav button:hover {
-      background: #fff;
-      color: #000;
-    }
-    .status {
-      text-align: center;
-      font-size: 14px;
-      color: #ccc;
-      margin-top: 10px;
-    }
-  </style>
+  body {
+    --bg: #111;
+    --text: #e0e0e0;
+    --accent: #00ff99;
+    --card-bg: #000;
+    --input-bg: #000;
+    --note-text: #fff;
+    --note-bg: #222;
+    --border: #444;
+  }
+  body.light-theme {
+    --bg: #fff;
+    --text: #000;
+    --accent: #007bff;
+    --card-bg: #f5f5f5;
+    --input-bg: #f0f0f0;
+    --note-text: #000;
+    --note-bg: #e0e0e0;
+    --border: #ccc;
+  }
+  body {
+    font-family: 'Courier New', monospace;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding-bottom: 70px;
+    transition: all 0.3s ease;
+  }
+  .tab-content, .subpage {
+    display: none;
+    padding: 16px;
+  }
+  .active {
+    display: block;
+  }
+  h2, h3 {
+    text-align: center;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  button, .format-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    background: #eee;
+    color: #222;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 8px auto;
+    display: block;
+    font-weight: 500;
+  }
+  .format-btn {
+    width: 80%;
+    max-width: 260px;
+  }
+  button:hover, .format-btn:hover {
+    background: #ddd;
+    color: #000;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    margin: 12px auto;
+    max-width: 580px;
+  }
+  img, video {
+    width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+  }
+  pre {
+    background: var(--note-bg);
+    color: var(--note-text);
+    padding: 8px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 8px;
+    font-family: inherit;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text);
+    font-size: 14px;
+  }
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: var(--card-bg);
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid var(--border);
+    padding: 8px 0;
+  }
+  .bottom-nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .bottom-nav button:hover {
+    background: #eee;
+    color: #000;
+  }
+  .status {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    margin-top: 10px;
+  }
+</style>
 </head>
 <body>
   <div style="text-align: right; padding: 10px;">
