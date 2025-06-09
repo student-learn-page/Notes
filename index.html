@@ -1,4 +1,5 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 <head>
   <title>Student-learn🎓</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -128,11 +129,14 @@
   <div style="text-align: right; padding: 10px;">
     <button onclick="toggleTheme()">🌗 Toggle Theme</button>
   </div>
+
+  <!-- Tabs -->
   <div id="homeTab" class="tab-content active">
     <h2>🏠 Home – Latest Uploads</h2>
     <input type="text" id="homeSearch" placeholder="🔍 Search..." oninput="filterCards('homeSearch', 'homeList')" />
     <div id="homeList"></div>
   </div>
+
   <div id="sequenceTab" class="tab-content">
     <h2>📂 Sequence View</h2>
     <button class="format-btn" onclick="openPage('notesPage')">📄 Notes</button>
@@ -141,6 +145,7 @@
     <button class="format-btn" onclick="openPage('videosPage')">📹 Videos</button>
     <button class="format-btn" onclick="openFavorites()">⭐ Favorites</button>
   </div>
+
   <div id="uploadTab" class="tab-content">
     <h2>📤 Upload Files</h2>
     <input id="title" type="text" placeholder="Enter title" />
@@ -155,35 +160,42 @@
     <button onclick="uploadContent()">Upload</button>
     <p class="status" id="status"></p>
   </div>
+
+  <!-- Sequence Pages -->
   <div id="notesPage" class="subpage">
     <button onclick="goBack()">⬅ Back</button>
     <h3>📄 All Notes</h3>
     <input type="text" id="notesSearch" placeholder="🔍 Search Notes..." oninput="filterCards('notesSearch', 'notesList')" />
     <div id="notesList"></div>
   </div>
+
   <div id="pdfsPage" class="subpage">
     <button onclick="goBack()">⬅ Back</button>
     <h3>📑 All PDFs</h3>
     <input type="text" id="pdfSearch" placeholder="🔍 Search PDFs..." oninput="filterCards('pdfSearch', 'pdfList')" />
     <div id="pdfList"></div>
   </div>
+
   <div id="imagesPage" class="subpage">
     <button onclick="goBack()">⬅ Back</button>
     <h3>🖼️ All Images</h3>
     <input type="text" id="imageSearch" placeholder="🔍 Search Images..." oninput="filterCards('imageSearch', 'imageList')" />
     <div id="imageList"></div>
   </div>
+
   <div id="videosPage" class="subpage">
     <button onclick="goBack()">⬅ Back</button>
     <h3>📹 All Videos</h3>
     <input type="text" id="videoSearch" placeholder="🔍 Search Videos..." oninput="filterCards('videoSearch', 'videoList')" />
     <div id="videoList"></div>
   </div>
+
   <div id="favoritesPage" class="subpage">
     <button onclick="goBack()">⬅ Back</button>
     <h3>⭐ Favorite Files</h3>
     <div id="favoritesList"></div>
   </div>
+
   <div id="commentViewPage" class="subpage">
     <button onclick="closeCommentView()">⬅ Back</button>
     <h3 id="commentFileTitle">💬 Comments</h3>
@@ -194,11 +206,15 @@
     </div>
     <div id="commentHistory"></div>
   </div>
+
+  <!-- Bottom Nav -->
   <div class="bottom-nav">
     <button onclick="switchTab('homeTab')">🏠 Home</button>
     <button onclick="switchTab('sequenceTab')">📂 Sequence</button>
     <button onclick="askPassword()">📤 Upload</button>
   </div>
+
+  <!-- JavaScript Code -->
   <script>
 const BUCKET = "recordings";
 const client = supabase.createClient(
@@ -281,7 +297,7 @@ async function loadAll() {
     const { data: signed } = await client.storage.from(BUCKET).createSignedUrl(file.name, 3600);
     if (!signed?.signedUrl) continue;
     const card = await createCard(file.name, signed.signedUrl);
-    home.appendChild(card.cloneNode(true));
+    home.appendChild(card); // No cloneNode
   }
 }
 
@@ -331,11 +347,13 @@ async function createCard(fileName, url) {
   const card = document.createElement("div");
   card.className = "card";
 
-  const title = fileName.split("__")[2];
-  const date = new Date(parseInt(fileName.split("__")[0]));
+  const title = fileName.split("__")[2] || "Untitled";
+  const timestamp = Number(fileName.split("__")[0]);
+  const date = new Date(timestamp);
+  const readableDate = isNaN(date.getTime()) ? "Unknown Date" : date.toLocaleDateString();
 
   const heading = document.createElement("h4");
-  heading.innerText = title + " (" + date.toLocaleDateString() + ")";
+  heading.innerText = `${title} (${readableDate})`;
   card.appendChild(heading);
 
   const favBtn = document.createElement("button");
@@ -403,6 +421,7 @@ function filterCards(inputId, containerId) {
   }
 }
 
+// Comments Page Logic
 let currentCommentFile = null;
 function openCommentView(fileName, url) {
   hideAll();
@@ -469,6 +488,6 @@ function closeCommentView() {
 }
 
 window.onload = loadAll;
-</script>
+  </script>
 </body>
 </html>
