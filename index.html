@@ -15,7 +15,6 @@
       --note-bg: #222;
       --border: #444;
     }
-
     .light-theme {
       --bg: #fff;
       --text: #000;
@@ -26,7 +25,6 @@
       --note-bg: #e0e0e0;
       --border: #ccc;
     }
-
     body {
       font-family: 'Courier New', monospace;
       background: var(--bg);
@@ -35,21 +33,17 @@
       padding-bottom: 80px;
       transition: all 0.3s ease;
     }
-
     .tab-content, .subpage {
       display: none;
       padding: 20px;
     }
-
     .active {
       display: block;
     }
-
     h2, h3 {
       text-align: center;
       color: var(--accent);
     }
-
     button, .format-btn {
       padding: 10px 20px;
       font-size: 16px;
@@ -62,17 +56,14 @@
       display: block;
       font-weight: bold;
     }
-
     .format-btn {
       width: 80%;
       max-width: 300px;
     }
-
     button:hover, .format-btn:hover {
       background: #fff;
       color: #000;
     }
-
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -81,13 +72,11 @@
       margin: 15px auto;
       max-width: 600px;
     }
-
     img, video {
       width: 100%;
       max-height: 320px;
       border-radius: 6px;
     }
-
     pre {
       background: var(--note-bg);
       color: var(--note-text);
@@ -95,7 +84,6 @@
       border-radius: 6px;
       white-space: pre-wrap;
     }
-
     input, select, textarea {
       width: 100%;
       padding: 10px;
@@ -106,7 +94,6 @@
       background: var(--input-bg);
       color: var(--accent);
     }
-
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -117,7 +104,6 @@
       border-top: 1px solid var(--border);
       padding: 10px 0;
     }
-
     .bottom-nav button {
       flex: 1;
       background: none;
@@ -127,12 +113,10 @@
       cursor: pointer;
       font-weight: bold;
     }
-
     .bottom-nav button:hover {
       background: #fff;
       color: #000;
     }
-
     .status {
       text-align: center;
       font-size: 14px;
@@ -149,6 +133,7 @@
 <!-- Tabs -->
 <div id="homeTab" class="tab-content active">
   <h2>🏠 Home – Latest Uploads</h2>
+  <input type="text" id="homeSearch" placeholder="🔍 Search..." oninput="filterCards('homeSearch', 'homeList')" />
   <div id="homeList"></div>
 </div>
 
@@ -179,24 +164,28 @@
 <div id="notesPage" class="subpage">
   <button onclick="goBack()">⬅ Back</button>
   <h3>📄 All Notes</h3>
+  <input type="text" id="notesSearch" placeholder="🔍 Search Notes..." oninput="filterCards('notesSearch', 'notesList')" />
   <div id="notesList"></div>
 </div>
 
 <div id="pdfsPage" class="subpage">
   <button onclick="goBack()">⬅ Back</button>
   <h3>📑 All PDFs</h3>
+  <input type="text" id="pdfSearch" placeholder="🔍 Search PDFs..." oninput="filterCards('pdfSearch', 'pdfList')" />
   <div id="pdfList"></div>
 </div>
 
 <div id="imagesPage" class="subpage">
   <button onclick="goBack()">⬅ Back</button>
   <h3>🖼️ All Images</h3>
+  <input type="text" id="imageSearch" placeholder="🔍 Search Images..." oninput="filterCards('imageSearch', 'imageList')" />
   <div id="imageList"></div>
 </div>
 
 <div id="videosPage" class="subpage">
   <button onclick="goBack()">⬅ Back</button>
   <h3>📹 All Videos</h3>
+  <input type="text" id="videoSearch" placeholder="🔍 Search Videos..." oninput="filterCards('videoSearch', 'videoList')" />
   <div id="videoList"></div>
 </div>
 
@@ -213,7 +202,6 @@ const client = supabase.createClient(
   'https://kelbfujbyjtdeopkhhxm.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlbGJmdWpieWp0ZGVvcGtoaHhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMzc5OTgsImV4cCI6MjA2MjgxMzk5OH0.iB97MRNwVCrhtDQaHrh7Q7ra1x4nVNGhih-Tm_pq31k'
 );
-
 const uploadPassword = "Kotli7890";
 
 function askPassword() {
@@ -336,6 +324,15 @@ async function createCard(fileName, url) {
   }
 
   return card;
+}
+
+function filterCards(inputId, containerId) {
+  const query = document.getElementById(inputId).value.toLowerCase();
+  const cards = document.getElementById(containerId).children;
+  for (let card of cards) {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(query) ? "block" : "none";
+  }
 }
 
 window.onload = loadAll;
