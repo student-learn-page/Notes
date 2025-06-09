@@ -1,89 +1,314 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>📘 Final Notes Viewer</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>📤 Classic Multi-View Uploader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/@supabase/supabase-js@2.39.5/dist/umd/supabase.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f0f0f0;
+      font-family: 'Courier New', monospace;
+      background: #111;
+      color: #e0e0e0;
+      margin: 0;
+      padding-bottom: 80px;
+    }
+
+    .tab-content, .subpage {
+      display: none;
       padding: 20px;
     }
-    h1 {
+
+    .active {
+      display: block;
+    }
+
+    h2, h3 {
       text-align: center;
-      margin-bottom: 30px;
+      color: #00ff99;
     }
-    .file-card {
-      background: white;
-      padding: 20px;
+
+    button, .format-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #000;
+      color: #fff;
+      border: 1px solid #fff;
+      border-radius: 4px;
+      cursor: pointer;
       margin: 10px auto;
-      border-radius: 10px;
-      max-width: 600px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .file-card h3 {
-      margin: 0 0 10px;
-    }
-    .file-card p {
-      margin: 0 0 15px;
-    }
-    .file-card a {
-      background: #28a745;
-      color: white;
-      padding: 10px 15px;
-      text-decoration: none;
-      border-radius: 5px;
+      display: block;
       font-weight: bold;
+    }
+
+    .format-btn {
+      width: 80%;
+      max-width: 300px;
+    }
+
+    button:hover, .format-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .card {
+      background: #000;
+      border: 1px solid #444;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 15px auto;
+      max-width: 600px;
+    }
+
+    img, video {
+      width: 100%;
+      max-height: 320px;
+      border-radius: 6px;
+    }
+
+    pre {
+      background: #111;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      font-family: inherit;
+      margin-bottom: 10px;
+      border: 1px solid #00ff99;
+      border-radius: 6px;
+      background: #000;
+      color: #00ff99;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #000;
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #444;
+      padding: 10px 0;
+    }
+
+    .bottom-nav button {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .bottom-nav button:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .status {
+      text-align: center;
+      font-size: 14px;
+      color: #ccc;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>📘 Final Notes Viewer</h1>
-  <div id="content">Loading data from Supabase...</div>
 
-  <script>
-    const supabase = window.supabase.createClient(
-      'https://lzezwbapnpvwcrtrxwen.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6ZXp3YmFwbnB2d2NydHJ4d2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0MTAyMjMsImV4cCI6MjA2NDk4NjIyM30.BLc1VKpyU9hWLnJaM80Qu0fZBql83oPG1UNRLLi-GgM'
-    );
+<!-- Tabs -->
+<div id="homeTab" class="tab-content active">
+  <h2>🏠 Home – Latest Uploads</h2>
+  <div id="homeList"></div>
+</div>
 
-    async function loadFiles() {
-      try {
-        const { data, error } = await supabase
-          .from('Note')
-          .select('*')
-          .order('created_at', { ascending: false });
+<div id="sequenceTab" class="tab-content">
+  <h2>📂 Sequence View</h2>
+  <button class="format-btn" onclick="openPage('notesPage')">📄 Notes</button>
+  <button class="format-btn" onclick="openPage('pdfsPage')">📑 PDFs</button>
+  <button class="format-btn" onclick="openPage('imagesPage')">🖼️ Images</button>
+  <button class="format-btn" onclick="openPage('videosPage')">📹 Videos</button>
+</div>
 
-        console.log("✅ DATA:", data);
-        console.log("❌ ERROR:", error);
+<div id="uploadTab" class="tab-content">
+  <h2>📤 Upload Files</h2>
+  <input id="title" type="text" placeholder="Enter title" />
+  <select id="format">
+    <option value="note">Note</option>
+    <option value="image">Image</option>
+    <option value="video">Video</option>
+    <option value="pdf">PDF</option>
+  </select>
+  <textarea id="noteText" placeholder="(if Note) Type your note..."></textarea>
+  <input type="file" id="filePicker" />
+  <button onclick="uploadContent()">Upload</button>
+  <p class="status" id="status"></p>
+</div>
 
-        const contentDiv = document.getElementById('content');
-        contentDiv.innerHTML = '';
+<!-- Sequence Subpages -->
+<div id="notesPage" class="subpage">
+  <button onclick="goBack()">⬅ Back</button>
+  <h3>📄 All Notes</h3>
+  <div id="notesList"></div>
+</div>
 
-        if (error || !data || data.length === 0) {
-          contentDiv.innerHTML = '<p style="color:red;">⚠️ No notes found. Check your Supabase rows and policies.</p>';
-          return;
-        }
+<div id="pdfsPage" class="subpage">
+  <button onclick="goBack()">⬅ Back</button>
+  <h3>📑 All PDFs</h3>
+  <div id="pdfList"></div>
+</div>
 
-        data.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'file-card';
-          div.innerHTML = `
-            <h3>${item.title || 'Untitled'}</h3>
-            <p>${item.description || 'No description available.'}</p>
-            <a href="${item.file_url}" target="_blank">📥 Download</a>
-          `;
-          contentDiv.appendChild(div);
-        });
+<div id="imagesPage" class="subpage">
+  <button onclick="goBack()">⬅ Back</button>
+  <h3>🖼️ All Images</h3>
+  <div id="imageList"></div>
+</div>
 
-      } catch (err) {
-        console.error("⚠️ JS Error:", err);
-        document.getElementById('content').innerHTML = '<p style="color:red;">Client error occurred. Check console.</p>';
-      }
-    }
+<div id="videosPage" class="subpage">
+  <button onclick="goBack()">⬅ Back</button>
+  <h3>📹 All Videos</h3>
+  <div id="videoList"></div>
+</div>
 
-    loadFiles();
-  </script>
+<!-- Navigation -->
+<div class="bottom-nav">
+  <button onclick="switchTab('homeTab')">🏠 Home</button>
+  <button onclick="switchTab('sequenceTab')">📂 Sequence</button>
+  <button onclick="askPassword()">📤 Upload</button>
+</div>
+
+<script>
+const BUCKET = "recordings";
+const client = supabase.createClient(
+  'https://kelbfujbyjtdeopkhhxm.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlbGJmdWpieWp0ZGVvcGtoaHhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMzc5OTgsImV4cCI6MjA2MjgxMzk5OH0.iB97MRNwVCrhtDQaHrh7Q7ra1x4nVNGhih-Tm_pq31k'
+);
+
+const uploadPassword = "Kotli7890";
+
+function askPassword() {
+  const pass = prompt("🔒 Enter password to access Upload:");
+  if (pass === uploadPassword) {
+    switchTab("uploadTab");
+  } else {
+    alert("❌ Wrong password!");
+  }
+}
+
+let allFiles = [];
+
+function switchTab(tabId) {
+  hideAll();
+  document.getElementById(tabId).classList.add("active");
+}
+
+function openPage(pageId) {
+  hideAll();
+  document.getElementById(pageId).classList.add("active");
+  if (pageId === "notesPage") renderFiles("note", "notesList");
+  if (pageId === "pdfsPage") renderFiles("pdf", "pdfList");
+  if (pageId === "imagesPage") renderFiles("image", "imageList");
+  if (pageId === "videosPage") renderFiles("video", "videoList");
+}
+
+function goBack() {
+  hideAll();
+  document.getElementById("sequenceTab").classList.add("active");
+}
+
+function hideAll() {
+  document.querySelectorAll(".tab-content, .subpage").forEach(el => el.classList.remove("active"));
+}
+
+async function uploadContent() {
+  const title = document.getElementById("title").value.trim();
+  const format = document.getElementById("format").value;
+  const noteText = document.getElementById("noteText").value.trim();
+  const file = document.getElementById("filePicker").files[0];
+  const fileName = `${Date.now()}__${format}__${title || "untitled"}`;
+
+  let uploadFile;
+  if (format === "note") {
+    if (!noteText) return alert("Note is empty.");
+    uploadFile = new File([noteText], fileName + ".txt", { type: "text/plain" });
+  } else {
+    if (!file) return alert("Choose a file.");
+    uploadFile = new File([file], fileName + "." + file.name.split(".").pop(), { type: file.type });
+  }
+
+  const { error } = await client.storage.from(BUCKET).upload(fileName, uploadFile);
+  document.getElementById("status").innerText = error ? "❌ " + error.message : "✅ Uploaded!";
+  if (!error) {
+    document.getElementById("noteText").value = "";
+    document.getElementById("title").value = "";
+    document.getElementById("filePicker").value = "";
+    loadAll();
+  }
+}
+
+async function loadAll() {
+  const { data } = await client.storage.from(BUCKET).list('', { sortBy: { column: 'name', order: 'desc' } });
+  allFiles = data;
+  const home = document.getElementById("homeList");
+  home.innerHTML = "";
+
+  for (let file of data || []) {
+    const { data: signed } = await client.storage.from(BUCKET).createSignedUrl(file.name, 3600);
+    if (!signed?.signedUrl) continue;
+    const card = await createCard(file.name, signed.signedUrl);
+    home.appendChild(card.cloneNode(true));
+  }
+}
+
+async function renderFiles(format, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  for (let file of allFiles || []) {
+    if (!file.name.includes(`__${format}__`)) continue;
+    const { data: signed } = await client.storage.from(BUCKET).createSignedUrl(file.name, 3600);
+    if (!signed?.signedUrl) continue;
+    const card = await createCard(file.name, signed.signedUrl);
+    container.appendChild(card);
+  }
+}
+
+async function createCard(fileName, url) {
+  const format = fileName.split("__")[1];
+  const card = document.createElement("div");
+  card.className = "card";
+
+  if (format === "note") {
+    const res = await fetch(url);
+    const text = await res.text();
+    const pre = document.createElement("pre");
+    pre.textContent = text;
+    card.appendChild(pre);
+  } else if (format === "image") {
+    const img = document.createElement("img");
+    img.src = url;
+    card.appendChild(img);
+  } else if (format === "video") {
+    const vid = document.createElement("video");
+    vid.src = url;
+    vid.controls = true;
+    card.appendChild(vid);
+  } else if (format === "pdf") {
+    const link = document.createElement("a");
+    link.href = url;
+    link.innerText = "📄 View PDF";
+    link.target = "_blank";
+    card.appendChild(link);
+  }
+
+  return card;
+}
+
+window.onload = loadAll;
+</script>
 </body>
 </html>
